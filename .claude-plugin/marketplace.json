@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "forge",
+  "owner": { "name": "k02miu" },
+  "description": "Forge — workflow-native development pipeline plugin for Claude Code.",
+  "plugins": [
+    {
+      "name": "forge",
+      "source": "./",
+      "description": "Workflow-native development pipeline: plan (issue design) -> work (implementation) -> finish (docs/tests follow-up + convergent review loop) -> ship (PR + review response). Stack-agnostic via auto-detected project profile and knowledge packs. Requires Dynamic Workflows and the gh CLI.",
+      "category": "workflow",
+      "keywords": ["dynamic-workflows", "code-review", "workflow", "github", "pull-request"]
+    }
+  ]
+}
