@@ -12,7 +12,7 @@ disable-model-invocation: true
 
 - Workflow(Dynamic Workflows)必須。詳細は `${CLAUDE_PLUGIN_ROOT}/references/workflow-core.md` §1
 - 封じ込め(不可逆操作を allowlist に入れない)は §5、ワークフロー内対話禁止は §6 を参照
-- gh CLI は不要(finish は PR 操作を行わない)
+- gh CLI は任意。`spec` 観点(§3)で対象 Issue を解決できた場合の読み取り(`gh issue view`)にのみ使い、PR 操作は行わない。gh が使えない場合は `spec` 観点を skip するだけでよい
 
 ## 2. Step 0: プロファイル解決
 
@@ -21,7 +21,9 @@ disable-model-invocation: true
 ## 3. Step 1: 前段(リーダー)
 
 1. `${CLAUDE_PLUGIN_ROOT}/scripts/diff-summary.sh [--base]` を実行。`NO_CHANGES` なら終了を報告して停止
-2. レビュー観点を選定する。基本観点は `architecture`(correctness を含む)、`tests` の 2 つで固定。残り枠は以下から優先度順に埋める: `security`(常時候補) → `checklist`(profile.paths.reviewChecklist が非 null) → `infra`(差分に iac/cloud 関連ファイルを含む) → 言語パック観点(knowledge packs)。上限は depth 依存(quick 2 / standard 4 / thorough 6、`${CLAUDE_PLUGIN_ROOT}/references/workflow-core.md` §4)。profile.review.dimensions が明示配列なら自動選定より優先する
+2. レビュー観点を選定する。基本観点は `architecture`(correctness を含む)、`tests` の 2 つで固定。残り枠は以下から優先度順に埋める: `spec`(下記の条件で対象 Issue を解決できた場合のみ) → `security`(常時候補) → `checklist`(profile.paths.reviewChecklist が非 null) → `infra`(差分に iac/cloud 関連ファイルを含む) → 言語パック観点(knowledge packs)。上限は depth 依存(quick 2 / standard 4 / thorough 6、`${CLAUDE_PLUGIN_ROOT}/references/workflow-core.md` §4)。profile.review.dimensions が明示配列なら自動選定より優先する
+
+   `spec` 観点の条件: ブランチ名とコミットメッセージ(`git log <base>..HEAD --oneline`)から Issue 参照(`#N` 等)を解決できた場合のみ採用する。採用時は `gh issue view <N>` で本文・受け入れ条件を取得し、roleHint に「Issue の受け入れ条件と diff の突合 — 未達の要件、Issue が求めていないスコープ外の変更、実装済みに見えて挙動が要件と食い違うもの」として Issue 内容ごと注入する。解決できない(参照なし・gh 不可)場合は観点に入れず、その旨を最終報告に含める。この観点は「頼まれたものを作ったか」を見る軸であり、コード品質を見る他観点とは独立に評価する
 3. 各観点は `{ key, agentType, roleHint }` で選定する。key → agentType の対応(ポジションロールは立場を代表し、裁定は行わない):
 
    | key | agentType |
@@ -32,7 +34,7 @@ disable-model-invocation: true
    | ui | forge:ui |
    | infra | forge:infra |
    | reuse | forge:reuse |
-   | checklist / 言語パック観点 | forge:analyst |
+   | spec / checklist / 言語パック観点 | forge:analyst |
 
    `roleHint` には観点固有の着眼点(reviewChecklist の要約、knowledge packs の追加観点など)を入れる
 4. 実行され得る検証コマンド(profile.commands の typecheck/lint/test/build 等)をユーザーに事前提示する。allowlist 外だと実行時に許可プロンプトが出るため

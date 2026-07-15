@@ -32,6 +32,8 @@ disable-model-invocation: true
 1. `gh issue view <#N> --comments` で本文と議論の現状を取得する
 2. 改訂の目的(何をどう直すか)をユーザーに確認する。不足情報は `AskUserQuestion` で解消する
 
+`AskUserQuestion` の運用(両モード共通): リポジトリや環境から調べられる**事実**は質問せず自分で調べ、ユーザーに問うのは**意思決定**のみとする。各質問には自分の推奨案を第一の選択肢として添える。
+
 共通(モード確定後):
 
 3. 分類(改訂モードは既存 Issue から読み取る、または上記確認で分類し直す)に応じて下表の観点プリセットを選び、プロファイルの `stack` や要求内容に応じて追加観点を足す。観点数は depth 上限(`workflow-core.md` §4: quick 2 / standard 4 / thorough 6)で切る
