@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "forge",
   "displayName": "Forge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Workflow-native development pipeline for Claude Code: plan (issue design) -> work (implementation) -> finish (docs/tests follow-up + convergent review loop) -> ship (PR + review response). Stack-agnostic via auto-detected project profile with stack-specific knowledge packs. Requires Dynamic Workflows and the gh CLI. No Agent Teams dependency.",
   "author": {
     "name": "k02miu"
